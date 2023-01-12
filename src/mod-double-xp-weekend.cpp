@@ -64,11 +64,11 @@ public:
         {
             if (IsEventActive())
             {
-                ChatHandler(player->GetSession()).PSendSysMessage("It's the Weekend! Your XP rate has been set to: %u", GetExperienceRate(player));
+                ChatHandler(player->GetSession()).PSendSysMessage("周末了！您的经验倍率已设置为：%u", GetExperienceRate(player));
             }
             else
             {
-                ChatHandler(player->GetSession()).PSendSysMessage("This server is running the |cff4CFF00Double XP Weekend |rmodule.");
+                ChatHandler(player->GetSession()).PSendSysMessage("此服务器正在运行 |cff4CFF00周末双倍经验 |r模块.");
             }
         }
     }
