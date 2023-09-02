@@ -40,7 +40,7 @@ public:
 
         int8 maxRate = sConfigMgr->GetOption<int8>("XPWeekend.MaxAllowedRate", 2);
 
-        if (!rate || rate > maxRate)
+        if (rate <= 0 || rate > maxRate)
         {
             handler->PSendSysMessage(LANG_CMD_WEEKEND_XP_ERROR, maxRate);
             handler->SetSentErrorMessage(true);
@@ -63,9 +63,13 @@ public:
     {
         if (sConfigMgr->GetOption<bool>("XPWeekend.Announce", false))
         {
-            if (IsEventActive())
+            if (IsEventActive() && !sConfigMgr->GetOption<bool>("XPWeekend.AlwaysEnabled", false))
             {
                 ChatHandler(player->GetSession()).PSendSysMessage("周末了！您的经验倍率已设置为：%u", GetExperienceRate(player));
+            }
+            else if (IsEventActive() && sConfigMgr->GetOption<bool>("XPWeekend.AlwaysEnabled", false))
+            {
+                ChatHandler(player->GetSession()).PSendSysMessage("Your XP rate has been set to: %u", GetExperienceRate(player));
             }
             else
             {
@@ -73,16 +77,15 @@ public:
             }
         }
     }
-           
 
-    void OnGiveXP(Player* player, uint32& amount, Unit* victim, uint8 /*xpSource*/) override
+    void OnGiveXP(Player* player, uint32& amount, Unit* victim, uint8 xpSource) override
     {
         if (!IsEventActive())
         {
             return;
         }
 
-        if (sConfigMgr->GetOption<bool>("XPWeekend.QuestOnly", false) && victim && victim->GetTypeId() == TYPEID_UNIT && !victim->ToCreature()->hasLootRecipient())
+        if (sConfigMgr->GetOption<bool>("XPWeekend.QuestOnly", false) && xpSource != PlayerXPSource::XPSOURCE_QUEST && xpSource != PlayerXPSource::XPSOURCE_QUEST_DF)
         {
             return;
         }
